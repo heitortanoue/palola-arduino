@@ -1,6 +1,8 @@
-#include "PalolaStepper.h"
+#include "src/stepper/PalolaStepper.h"
+#include "src/loadsensor/PalolaLoadSensor.h"
+#include "Pins.h"
 
-PalolaStepper stepper(8, 9, 10, 11);
+PalolaStepper stepper(STEPPER_PIN1, STEPPER_PIN2, STEPPER_PIN3, STEPPER_PIN4);
 
 void setup () {
     Serial.begin(9600);

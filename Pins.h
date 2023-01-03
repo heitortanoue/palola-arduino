@@ -1,0 +1,7 @@
+#define STEPPER_PIN1 8
+#define STEPPER_PIN2 9
+#define STEPPER_PIN3 10
+#define STEPPER_PIN4 11
+
+#define LOAD_SENSOR_DT A1
+#define LOAD_SENSOR_SCK A2

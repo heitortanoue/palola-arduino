@@ -34,6 +34,7 @@
             "includePath": [
                 "D:\\Programas\\Arduino\\hardware\\arduino\\avr\\cores\\arduino",
                 "D:\\Programas\\Arduino\\hardware\\arduino\\avr\\variants\\standard",
+                "C:\\Users\\heito\\OneDrive\\Documentos\\Arduino\\libraries\\HX711_Arduino_Library\\src",
                 "d:\\programas\\arduino\\hardware\\tools\\avr\\lib\\gcc\\avr\\7.3.0\\include",
                 "d:\\programas\\arduino\\hardware\\tools\\avr\\lib\\gcc\\avr\\7.3.0\\include-fixed",
                 "d:\\programas\\arduino\\hardware\\tools\\avr\\avr\\include"
