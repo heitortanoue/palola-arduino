@@ -20,6 +20,13 @@ PalolaStepper::PalolaStepper(int pin1, int pin2, int pin3, int pin4) {
     _pin4 = pin4;
 }
 
+PalolaStepper::PalolaStepper() {
+    _pin1 = 0;
+    _pin2 = 0;
+    _pin3 = 0;
+    _pin4 = 0;
+}
+
 void PalolaStepper::setArduinoPinsOutput() {
     pinMode(_pin1, OUTPUT);
     pinMode(_pin2, OUTPUT);
@@ -52,5 +59,12 @@ void PalolaStepper::rotateHOR() {                    // Movimento no sentido hor
     {
       loadMatrixIntoArduino(HOR[j]);               // Carrega bytes da Matriz HOR na Porta B 
       delay (ATRASO_FASE);          // Atraso de tempo entre as fases em milisegundos
+    }
+}
+
+void PalolaStepper::dispenseMeal() {
+    for (int i = 0; i < TURNS_PER_MEAL; i++) {
+        rotateHOR();
+        rotateAHO();
     }
 }

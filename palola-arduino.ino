@@ -1,16 +1,14 @@
-#include "src/stepper/PalolaStepper.h"
-#include "src/loadsensor/PalolaLoadSensor.h"
-#include "Pins.h"
+#include "src/palola/Palola.h"
 
-PalolaStepper stepper(STEPPER_PIN1, STEPPER_PIN2, STEPPER_PIN3, STEPPER_PIN4);
+Palola palola = Palola();
 
 void setup () {
-    Serial.begin(9600);
-    Serial.println("Hello World");
-    stepper.setArduinoPinsOutput();
+    Serial.begin(115200);
+    palola.getReady();
+
 }
 
 void loop () {
-    Serial.println("loop started...");
-    stepper.rotateHOR();
+    palola.checkMeals();
+    delay(MINUTES_BETWEEN_CHECKS * 60 * 1000);
 }
