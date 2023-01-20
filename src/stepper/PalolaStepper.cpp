@@ -42,7 +42,6 @@ void PalolaStepper::loadMatrixIntoArduino(byte matrix[4]) {
 }
 
 void PalolaStepper::rotateAHO() {                   // Movimento no sentido anti-horário 
-
   for(int i = 0; i < 512; i++)      // incrementa o contador i de 0 a 511 - uma volta
   
     for(int j = 0; j < 4; j++)      // incrementa o contador j de 0 a 3 
@@ -63,8 +62,17 @@ void PalolaStepper::rotateHOR() {                    // Movimento no sentido hor
 }
 
 void PalolaStepper::dispenseMeal() {
+    Serial.println("Dispensing meal...");
     for (int i = 0; i < TURNS_PER_MEAL; i++) {
         rotateHOR();
         rotateAHO();
     }
+    turnOff();
+}
+
+void PalolaStepper::turnOff() {
+    digitalWrite(_pin1, LOW);
+    digitalWrite(_pin2, LOW);
+    digitalWrite(_pin3, LOW);
+    digitalWrite(_pin4, LOW);
 }

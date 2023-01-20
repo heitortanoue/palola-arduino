@@ -16,66 +16,109 @@ void PalolaWifi::connectToWifi() {
     WiFiMulti.addAP(SECRET_WIFI_SSID, SECRET_WIFI_PASSWORD);
 }
 
-void PalolaWifi::startMeal() {
-
-}
-
-void PalolaWifi::finishMeal(MealStatus status) {
-
-}
-
-Meal PalolaWifi::getPendingMeal() {
-    HTTPClient* http = this->_startClient();
-    if (http == nullptr) {
-        return {};
-    }
-
-    int httpCode = (*http).GET();
-
-    if (httpCode > 0) { //Maior que 0, tem resposta a ser lida
-        String payload = (*http).getString();
-        Serial.println(httpCode);
-
-        DynamicJsonDocument doc(1024);
-        deserializeJson(doc, payload);
-
-        Meal meal = {};
-        meal.group = doc["group"];
-        meal.id = doc["id"];
-        meal.status = -1;
-
-        (*http).end();
-        delete http;
-
-        return meal;
-    }
-    else {
-        Serial.println(httpCode);
-        Serial.println("Falha na requisição");
-
-        (*http).end();
-        delete http;
-
-        return {};
-    }
-}
-
-HTTPClient* PalolaWifi::_startClient() {
-    if (!this->isConnected()){
-        Serial.println("Falha na conexão");
-        return nullptr;
+// makes a post request to 'finishmeal' with body {id, status, weight}
+void PalolaWifi::finishMeal(Meal meal, float weight) {
+    Serial.println("[FUNCTION] finishMeal");
+    if (!this->isConnected()) {
+        Serial.println("Not connected to WiFi");
+        return;
     }
 
     std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
     client->setFingerprint(fingerprint);
-    Serial.println("connected...");
 
-    HTTPClient* http = new HTTPClient();
+    HTTPClient http;
 
-    (*http).begin(*client, (String) SERVER_URL + "pendingmeal");
+    if (http.begin(*client, "https://palola.vercel.app/api/finishmeal")){
+        Serial.println("HTTPClient began");
+    }
 
-    (*http).addHeader("Content-Type", "application/json");
-    (*http).addHeader("Authorization", SECRET_SERVER_AUTH_KEY);
+    http.addHeader("Content-Type", "application/json");
+    http.addHeader("authorization", SECRET_SERVER_AUTH_KEY);
 
-    return http;
+    DynamicJsonDocument postDoc(1024);
+    postDoc["id"] = meal.id;
+    postDoc["status"] = meal.status;
+    postDoc["weight"] = weight;
+
+    Serial.println("Posting to finish meal...");
+    String body;
+    serializeJson(postDoc, body);
+    int httpCode = http.POST(body);
+    Serial.println((String) "Finished meal, status: " + (String) httpCode);
+
+    if (httpCode > 0) { //Maior que 0, tem resposta a ser lida
+        String payload = http.getString();
+
+        DynamicJsonDocument doc(1024);
+        deserializeJson(doc, payload);
+        Serial.println((String) "Got response: " + (String) doc["status"]);
+
+        if (doc["status"] != "sucess") {
+            Serial.println("Failed requisition");
+            Serial.println("Message: " + (String) doc["message"]);
+        }
+    }
+    else {
+        Serial.println((String) "Failed to finish meal, status code: " + (String) httpCode);
+    }
+
+    http.end();
+}
+
+Meal PalolaWifi::getPendingMeal() {
+    Serial.println("[FUNCTION] getPendingMeal");
+    if (!this->isConnected()) {
+        Serial.println("Not connected to WiFi");
+        return {};
+    }
+
+    std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
+    client->setFingerprint(fingerprint);
+
+    HTTPClient http;
+
+    if (http.begin(*client, "https://palola.vercel.app/api/pendingmeals")){
+        Serial.println("HTTPClient began");
+    }
+
+    http.addHeader("Content-Type", "application/json");
+    http.addHeader("authorization", SECRET_SERVER_AUTH_KEY);
+
+    Serial.println("Getting pending meal...");
+    int httpCode = http.GET();
+    Serial.println((String) "Made connection, status: " + (String) httpCode);
+
+    if (httpCode > 0) { //Maior que 0, tem resposta a ser lida
+        String payload = http.getString();
+
+        DynamicJsonDocument doc(1024);
+        deserializeJson(doc, payload);
+        Serial.println((String) "Got response: " + (String) doc["status"]);
+
+        if (doc["status"] != "sucess") {
+            Serial.println("Failed requisition, status: " + (String) doc["status"]);
+            if (doc["message"]) {
+                Serial.println("Message: " + (String) doc["message"]);
+            }
+            http.end();
+            return {};
+        }
+
+        Meal meal = {};
+        meal.id = doc["id"];
+        meal.status = MEAL_STATUS_PENDING;
+        Serial.println((String) "Got pending meal, id: " + (String) meal.id);
+
+        http.end();
+
+        return meal;
+    }
+    else {
+        Serial.println((String) "Failed to get pending meal, status code: " + (String) httpCode);
+
+        http.end();
+
+        return {};
+    }
 }

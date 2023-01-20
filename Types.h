@@ -22,9 +22,8 @@ typedef struct {
 } MealGroup;
 
 typedef struct {
-    const char* group;
     const char* id;
-    byte status;
+    MealStatus status;
 } Meal;
 
 #endif

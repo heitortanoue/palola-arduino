@@ -9,14 +9,14 @@
 #include "../ledrgb/PalolaLedRGB.h"
 #include "../wifi/PalolaWifi.h"
 
-#define MINUTES_BETWEEN_CHECKS 5 
+#define MINUTES_BETWEEN_CHECKS 1 
 
 class Palola {
     public:
         Palola();
         void getReady();
         void checkMeals();
-        void feed();
+        void feed(Meal meal);
 
         PalolaStepper stepper;
         PalolaLoadSensor loadSensor;

@@ -23,10 +23,9 @@ class PalolaWifi {
         boolean isConnected();
 
         Meal getPendingMeal();
-        void startMeal();
-        void finishMeal(MealStatus status);
+        void finishMeal(Meal meal, float weight);
     private:
-        HTTPClient* _startClient();
+
 };
 
 #endif

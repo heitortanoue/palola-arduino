@@ -4,12 +4,16 @@ PalolaLedRGB::PalolaLedRGB(int pin1, int pin2, int pin3) {
     _pin1 = pin1;
     _pin2 = pin2;
     _pin3 = pin3;
+    _lastBlinkTime = 0;
+    _lastState = 0;
 }
 
 PalolaLedRGB::PalolaLedRGB() {
     _pin1 = 0;
     _pin2 = 0;
     _pin3 = 0;
+    _lastBlinkTime = 0;
+    _lastState = 0;
 }
 
 void PalolaLedRGB::setArduinoPinsOutput() {
@@ -50,13 +54,18 @@ void PalolaLedRGB::setMode(LED_MODE mode) {
     }
 }
 
+// async blinking of the led with a delay
 void PalolaLedRGB::blink(LED_MODE mode, int delayTime) {
-    static unsigned long previousMillis = 0;
     unsigned long currentMillis = millis();
-
-    if (currentMillis - previousMillis >= delayTime) {
-        previousMillis = currentMillis;
-        setMode(mode);
+    if (currentMillis - _lastBlinkTime > delayTime) {
+        _lastBlinkTime = currentMillis;
+        if (_lastState == 0) {
+            _lastState = 1;
+            setMode(mode);
+        } else {
+            _lastState = 0;
+            turnOff();
+        }
     }
 }
 

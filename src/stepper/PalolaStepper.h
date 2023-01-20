@@ -3,7 +3,7 @@
 
 #include <Arduino.h>
 #define ATRASO_FASE 2         // Intervalo de tempo entre as fases em milisegundos
-#define TURNS_PER_MEAL 5
+#define TURNS_PER_MEAL 1      // Quantidade de voltas do motor para dispensar uma refeição
 
 class PalolaStepper {
     public:
@@ -21,6 +21,7 @@ class PalolaStepper {
         void loadMatrixIntoArduino(byte matrix[4]);
         void rotateHOR();
         void rotateAHO();
+        void turnOff();
 };
 
 #endif

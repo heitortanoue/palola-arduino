@@ -26,6 +26,9 @@ class PalolaLedRGB {
         int _pin1;
         int _pin2;
         int _pin3;
+
+        byte _lastState;
+        long _lastBlinkTime;
 };
 
 #endif
