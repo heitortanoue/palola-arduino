@@ -3,25 +3,27 @@
 Palola::Palola() {
     stepper = PalolaStepper(PIN_STEPPER_1, PIN_STEPPER_2, PIN_STEPPER_3, PIN_STEPPER_4);
     //loadSensor = PalolaLoadSensor(PIN_LOAD_SENSOR_DT, PIN_LOAD_SENSOR_SCK);
-    // rtc = PalolaRTC(PIN_RTC_SCL, PIN_RTC_SDA);
     led = PalolaLedRGB(PIN_LED_RGB_R, PIN_LED_RGB_G, PIN_LED_RGB_B);
     wifi = PalolaWifi();
+    buzzer = PalolaBuzzer(PIN_BUZZER);
 }
 
 // Blink the LED to indicate that the system is initializing until all the sensors are ready
 void Palola::getReady() {
+    Serial.println("Initializing system");
     stepper.setArduinoPinsOutput();
-    //loadSensor.setArduinoPinsOutput();
+    loadSensor.setArduinoPinsOutput();
     led.setArduinoPinsOutput();
-    // rtc.setArduinoPinsOutput();
     wifi.connectToWifi();
+    buzzer.setArduinoPinsOutput();
 
     while (
-        // !rtc.isReady() ||
-        //!loadSensor.isReady() ||
+        !loadSensor.isReady() ||
         !wifi.isConnected()
     ) {
         wifi.connectToWifi();
+        loadSensor.turnOn();
+
         led.setMode(LED_INICIALIZING);
         delay(500);
         led.turnOff();
@@ -29,6 +31,7 @@ void Palola::getReady() {
     } 
 
     led.setMode(LED_READY);
+    buzzer.playWhenReady();
     Serial.println("All systems ready");
 }
 
@@ -79,6 +82,7 @@ void Palola::feed(Meal meal) {
     wifi.finishMeal(meal, 0.623);
 
     led.setMode(LED_READY);
+    buzzer.playWhenMealIsFinished();
     delay(5000);
     led.turnOff();
 }

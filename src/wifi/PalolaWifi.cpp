@@ -11,6 +11,9 @@ boolean PalolaWifi::isConnected () {
 }
 
 void PalolaWifi::connectToWifi() {
+    if (this->isConnected()) {
+        return;
+    }
     Serial.println("Connecting to WiFi...");
     WiFi.mode(WIFI_STA);
     WiFiMulti.addAP(SECRET_WIFI_SSID, SECRET_WIFI_PASSWORD);

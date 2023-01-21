@@ -14,16 +14,19 @@ class PalolaLoadSensor {
 
         void setArduinoPinsOutput();
         boolean isReady();
+        void turnOn();
         
         void setTare(float newTare);
-        float getWeight();
+        long getWeight();
 
         boolean isBowlEmpty();
+
+        HX711 getLoadSensor();
     private:
         int _pinDOUT;
         int _pinPD_SCK;
         float _tare;
-        float _currentWeight;
+        long _currentWeight;
         float _maxWeight;
         HX711 _loadSensor;
 };

@@ -4,10 +4,10 @@
 #include <Arduino.h>
 #include "../stepper/PalolaStepper.h"
 #include "../loadsensor/PalolaLoadSensor.h"
-// #include "../rtc/PalolaRTC.h"
 #include "../../Pins.h"
 #include "../ledrgb/PalolaLedRGB.h"
 #include "../wifi/PalolaWifi.h"
+#include "../buzzer/PalolaBuzzer.h"
 
 #define MINUTES_BETWEEN_CHECKS 1 
 
@@ -20,9 +20,9 @@ class Palola {
 
         PalolaStepper stepper;
         PalolaLoadSensor loadSensor;
-        // PalolaRTC rtc;
         PalolaLedRGB led;
         PalolaWifi wifi;
+        PalolaBuzzer buzzer;
 };
 
 #endif

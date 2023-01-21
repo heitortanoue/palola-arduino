@@ -9,12 +9,12 @@ PalolaLoadSensor::PalolaLoadSensor(int dout, int pd_sck) {
     _loadSensor = HX711();
 
     // _loadSensor.set_scale(CALIBRATION_FACTOR);
-    _loadSensor.tare();
+    // _loadSensor.tare();
 }
 
 PalolaLoadSensor::PalolaLoadSensor() {
-    _pinDOUT = D6;
-    _pinPD_SCK = D7;
+    _pinDOUT = D4;
+    _pinPD_SCK = D5;
     _tare = 0;
     _currentWeight = 0;
     _maxWeight = 0;
@@ -25,6 +25,10 @@ boolean PalolaLoadSensor::isReady() {
     return _loadSensor.is_ready();
 }
 
+void PalolaLoadSensor::turnOn() {
+    _loadSensor.power_up();
+}
+
 void PalolaLoadSensor::setArduinoPinsOutput() {
     _loadSensor.begin(_pinDOUT, _pinPD_SCK);
 }
@@ -33,21 +37,20 @@ void PalolaLoadSensor::setTare(float newTare) {
     _tare = newTare;
 }
 
-float PalolaLoadSensor::getWeight() {
+long PalolaLoadSensor::getWeight() {
     _loadSensor.power_up();
     delay(100);
 
     if (_loadSensor.is_ready() == false) {
-        // Serial.println("HX711 not found.");
         return -1;
     }
 
     _currentWeight = _loadSensor.get_units(10);
     _currentWeight -= _tare;
 
-    if (_currentWeight < 0) {
-        _currentWeight = 0;
-    }
+    // if (_currentWeight < 0) {
+    //     _currentWeight = 0;
+    // }
 
     _loadSensor.power_down();
     
@@ -56,5 +59,9 @@ float PalolaLoadSensor::getWeight() {
 
 boolean PalolaLoadSensor::isBowlEmpty() {
     return _currentWeight < (_maxWeight * MIN_EMPTY_PERCENTAGE);
+}
+
+HX711 PalolaLoadSensor::getLoadSensor() {
+    return _loadSensor;
 }
 
