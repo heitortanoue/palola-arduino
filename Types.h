@@ -24,6 +24,7 @@ typedef struct {
 typedef struct {
     const char* id;
     MealStatus status;
+    float foodQuantity;
 } Meal;
 
 #endif

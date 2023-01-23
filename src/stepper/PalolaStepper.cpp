@@ -47,7 +47,7 @@ void PalolaStepper::rotateAHO() {                   // Movimento no sentido anti
     for(int j = 0; j < 4; j++)      // incrementa o contador j de 0 a 3 
     {
       loadMatrixIntoArduino(AHO[j]);              // Carrega bytes da Matriz AHO na Porta B 
-      delay (ATRASO_FASE);          // Atraso de tempo entre as fases em milisegundos
+      delay (STEPPER_DELAY_PHASE);          // Atraso de tempo entre as fases em milisegundos
     }    
 }
 
@@ -57,15 +57,19 @@ void PalolaStepper::rotateHOR() {                    // Movimento no sentido hor
     for(int j = 0; j < 4; j++)      // incrementa o contador j de 0 a 3 
     {
       loadMatrixIntoArduino(HOR[j]);               // Carrega bytes da Matriz HOR na Porta B 
-      delay (ATRASO_FASE);          // Atraso de tempo entre as fases em milisegundos
+      delay (STEPPER_DELAY_PHASE);          // Atraso de tempo entre as fases em milisegundos
     }
 }
 
-void PalolaStepper::dispenseMeal() {
+void PalolaStepper::dispenseMeal(float foodQuantity) {
     Serial.println("Dispensing meal...");
-    for (int i = 0; i < TURNS_PER_MEAL; i++) {
+    int turns = STEPPER_TURNS_FOR_MEAL;
+    if (foodQuantity > 0) {
+        turns = int(STEPPER_TURNS_FOR_MEAL * foodQuantity);
+    }
+
+    for (int i = 0; i < STEPPER_TURNS_FOR_MEAL; i++) {
         rotateHOR();
-        rotateAHO();
     }
     turnOff();
 }

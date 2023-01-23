@@ -44,23 +44,38 @@ void Palola::checkMeals() {
         return;
     }
 
-    led.blink(LED_SEARCHING, 500);
+    led.setMode(LED_SEARCHING);
     const Meal meal = wifi.getPendingMeal();
+
+    // if (meal.status == MEAL_STATUS_REJECTED) {
+    //     Serial.println("Error getting pending meal");
+    //     led.setMode(LED_ERROR);
+    //     delay(5000);
+    //     return;
+    // }
 
     // Check if there are meals pending
     if (meal.id != 0) {
         Serial.println("Found meal of id " + String(meal.id));
+        // Serial.println((String) "Last meal id: " + (String) _lastMealId);
+        // if (meal.id == _lastMealId) {
+        //     Serial.println("Meal already accepted before");
+        //     led.setMode(LED_ERROR);
+        //     wifi.finishMeal(meal, 0.623);
+        //     return;
+        // }
         this->feed(meal);
+        // _lastMealId = meal.id;
     } else {
         Serial.println("No meals pending");
-        led.blink(LED_READY, 500);
+        led.setMode(LED_READY);
+        delay(5000);
     }
 }
 
 // Feed the pet
 void Palola::feed(Meal meal) {
     Serial.println("Feeding pet");
-    led.setMode(LED_SEARCHING);
 
     // Check if the bowl is full
     // if (!loadSensor.isBowlEmpty()) {
@@ -76,7 +91,7 @@ void Palola::feed(Meal meal) {
 
     led.setMode(LED_FEEDING);
 
-    stepper.dispenseMeal();
+    stepper.dispenseMeal(meal.foodQuantity);
 
     meal.status = MEAL_STATUS_ACCEPTED;
     wifi.finishMeal(meal, 0.623);
