@@ -2,15 +2,15 @@
 #define __PALOLA_STEPPER_H__
 
 #include <Arduino.h>
-#define ATRASO_FASE 2         // Intervalo de tempo entre as fases em milisegundos
-#define TURNS_PER_MEAL 1      // Quantidade de voltas do motor para dispensar uma refeição
+#define STEPPER_DELAY_PHASE 2         // Intervalo de tempo entre as fases em milisegundos
+#define STEPPER_TURNS_FOR_MEAL 2      // Quantidade de voltas do motor para dispensar uma xícara de ração
 
 class PalolaStepper {
     public:
         PalolaStepper();
         PalolaStepper(int pin1, int pin2, int pin3, int pin4);
         void setArduinoPinsOutput();
-        void dispenseMeal();
+        void dispenseMeal( float foodQuantity ); 
 
     private:
         int _pin1;

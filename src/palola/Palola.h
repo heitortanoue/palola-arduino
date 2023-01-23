@@ -23,6 +23,8 @@ class Palola {
         PalolaLedRGB led;
         PalolaWifi wifi;
         PalolaBuzzer buzzer;
+    private:
+        const char* _lastMealId;
 };
 
 #endif

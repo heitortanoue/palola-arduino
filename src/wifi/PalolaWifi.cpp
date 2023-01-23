@@ -57,7 +57,7 @@ void PalolaWifi::finishMeal(Meal meal, float weight) {
         deserializeJson(doc, payload);
         Serial.println((String) "Got response: " + (String) doc["status"]);
 
-        if (doc["status"] != "sucess") {
+        if (httpCode != 200 || doc["status"] != "sucess") {
             Serial.println("Failed requisition");
             Serial.println("Message: " + (String) doc["message"]);
         }
@@ -73,7 +73,9 @@ Meal PalolaWifi::getPendingMeal() {
     Serial.println("[FUNCTION] getPendingMeal");
     if (!this->isConnected()) {
         Serial.println("Not connected to WiFi");
-        return {};
+        return {
+            .status = MEAL_STATUS_REJECTED
+        };
     }
 
     std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
@@ -99,17 +101,20 @@ Meal PalolaWifi::getPendingMeal() {
         deserializeJson(doc, payload);
         Serial.println((String) "Got response: " + (String) doc["status"]);
 
-        if (doc["status"] != "sucess") {
+        if (httpCode != 200 || doc["status"] != "sucess") {
             Serial.println("Failed requisition, status: " + (String) doc["status"]);
             if (doc["message"]) {
                 Serial.println("Message: " + (String) doc["message"]);
             }
             http.end();
-            return {};
+            return {
+                .status = MEAL_STATUS_REJECTED
+            };
         }
 
         Meal meal = {};
         meal.id = doc["id"];
+        meal.foodQuantity = (float) doc["foodQuantity"];
         meal.status = MEAL_STATUS_PENDING;
         Serial.println((String) "Got pending meal, id: " + (String) meal.id);
 
@@ -119,9 +124,9 @@ Meal PalolaWifi::getPendingMeal() {
     }
     else {
         Serial.println((String) "Failed to get pending meal, status code: " + (String) httpCode);
-
         http.end();
-
-        return {};
+        return {
+            .status = MEAL_STATUS_REJECTED
+        };
     }
 }
