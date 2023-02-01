@@ -7,12 +7,12 @@
 #define PIN_STEPPER_4 D3
 
 #define PIN_LOAD_SENSOR_DT D4
-#define PIN_LOAD_SENSOR_SCK D5
+#define PIN_LOAD_SENSOR_SCK D9
 
 #define PIN_LED_RGB_R D6
 #define PIN_LED_RGB_G D7
 #define PIN_LED_RGB_B D8
 
-#define PIN_BUZZER D9
+#define PIN_BUZZER D5
 
 #endif

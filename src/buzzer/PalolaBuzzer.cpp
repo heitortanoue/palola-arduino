@@ -12,18 +12,25 @@ void PalolaBuzzer::setArduinoPinsOutput() {
     pinMode(_pin, OUTPUT);
 }
 
+void PalolaBuzzer::playNote(unsigned int note, unsigned long noteDuration) {
+    tone(_pin, note);
+    delay(noteDuration);
+    noTone(_pin);
+}
+
 void PalolaBuzzer::playWhenMealIsFinished() {
     unsigned long noteDuration = BUZZER_DURATION / 6;
     for (int i = 0; i < 3; i++) {
-        digitalWrite(_pin, HIGH);
+        playNote(NOTE_D5, noteDuration);
         delay(noteDuration);
-        digitalWrite(_pin, LOW);
-        delay(noteDuration);
+        playNote(NOTE_G5, noteDuration);
     }
 }
 
 void PalolaBuzzer::playWhenReady() {
-    digitalWrite(_pin, HIGH);
-    delay(BUZZER_DURATION);
-    digitalWrite(_pin, LOW);
+    unsigned long noteDuration = BUZZER_DURATION / 6;
+    for (int i = 0; i < 3; i++) {
+        playNote(NOTE_B5, noteDuration);
+        delay(noteDuration);
+    }
 }

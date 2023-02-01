@@ -18,11 +18,11 @@ void Palola::getReady() {
     buzzer.setArduinoPinsOutput();
 
     while (
-        !loadSensor.isReady() ||
+        //!loadSensor.isReady() ||
         !wifi.isConnected()
     ) {
         wifi.connectToWifi();
-        loadSensor.turnOn();
+        //loadSensor.turnOn();
 
         led.setMode(LED_INICIALIZING);
         delay(500);
@@ -47,25 +47,32 @@ void Palola::checkMeals() {
     led.setMode(LED_SEARCHING);
     const Meal meal = wifi.getPendingMeal();
 
-    // if (meal.status == MEAL_STATUS_REJECTED) {
-    //     Serial.println("Error getting pending meal");
-    //     led.setMode(LED_ERROR);
-    //     delay(5000);
-    //     return;
-    // }
+    if (meal.status == MEAL_STATUS_REJECTED) {
+        Serial.println("Error getting pending meal");
+        led.setMode(LED_ERROR);
+        delay(5000);
+        return;
+    }
+
+    if (meal.status == MEAL_STATUS_NO_MEALS) {
+        Serial.println("No meals pending");
+        led.setMode(LED_READY);
+        delay(5000);
+        return;
+    }
 
     // Check if there are meals pending
-    if (meal.id != 0) {
-        Serial.println("Found meal of id " + String(meal.id));
-        // Serial.println((String) "Last meal id: " + (String) _lastMealId);
-        // if (meal.id == _lastMealId) {
-        //     Serial.println("Meal already accepted before");
-        //     led.setMode(LED_ERROR);
-        //     wifi.finishMeal(meal, 0.623);
-        //     return;
-        // }
+    if (meal.id.isEmpty() == false) {
+        Serial.println("Found meal of id " + meal.id);
+        Serial.println((String) "Last meal id: " +  _lastMealId);
+        if (meal.id == _lastMealId) {
+            Serial.println("Meal already accepted before");
+            led.setMode(LED_ERROR);
+            wifi.finishMeal(meal, 0.623);
+            return;
+        }
         this->feed(meal);
-        // _lastMealId = meal.id;
+        _lastMealId = meal.id;
     } else {
         Serial.println("No meals pending");
         led.setMode(LED_READY);

@@ -53,7 +53,7 @@ void PalolaWifi::finishMeal(Meal meal, float weight) {
     if (httpCode > 0) { //Maior que 0, tem resposta a ser lida
         String payload = http.getString();
 
-        DynamicJsonDocument doc(1024);
+        DynamicJsonDocument doc(2048);
         deserializeJson(doc, payload);
         Serial.println((String) "Got response: " + (String) doc["status"]);
 
@@ -97,12 +97,12 @@ Meal PalolaWifi::getPendingMeal() {
     if (httpCode > 0) { //Maior que 0, tem resposta a ser lida
         String payload = http.getString();
 
-        DynamicJsonDocument doc(1024);
+        DynamicJsonDocument doc(2048);
         deserializeJson(doc, payload);
         Serial.println((String) "Got response: " + (String) doc["status"]);
 
-        if (httpCode != 200 || doc["status"] != "sucess") {
-            Serial.println("Failed requisition, status: " + (String) doc["status"]);
+        if (httpCode != 200) {
+            Serial.println("Failed requisition, status: " + (String) httpCode);
             if (doc["message"]) {
                 Serial.println("Message: " + (String) doc["message"]);
             }
@@ -112,11 +112,19 @@ Meal PalolaWifi::getPendingMeal() {
             };
         }
 
+        if(doc["status"] == "no-meals") {
+            Serial.println("No pending meals");
+            http.end();
+            return {
+                .status = MEAL_STATUS_NO_MEALS
+            };
+        }
+
         Meal meal = {};
-        meal.id = doc["id"];
+        meal.id = (String) doc["id"];
         meal.foodQuantity = (float) doc["foodQuantity"];
         meal.status = MEAL_STATUS_PENDING;
-        Serial.println((String) "Got pending meal, id: " + (String) meal.id);
+        Serial.println((String) "Got pending meal, id: " + meal.id);
 
         http.end();
 

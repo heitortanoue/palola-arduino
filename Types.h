@@ -11,6 +11,7 @@ enum MealStatus {
     MEAL_STATUS_ACCEPTED,
     MEAL_STATUS_REJECTED,
     MEAL_STATUS_FULL,
+    MEAL_STATUS_NO_MEALS,
 };
 
 typedef struct {
@@ -22,7 +23,7 @@ typedef struct {
 } MealGroup;
 
 typedef struct {
-    const char* id;
+    String id;
     MealStatus status;
     float foodQuantity;
 } Meal;

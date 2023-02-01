@@ -24,7 +24,7 @@ class Palola {
         PalolaWifi wifi;
         PalolaBuzzer buzzer;
     private:
-        const char* _lastMealId;
+        String _lastMealId;
 };
 
 #endif

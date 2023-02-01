@@ -19,6 +19,7 @@ class PalolaBuzzer {
         void playWhenReady();
     private:
         int _pin;
+        void playNote(unsigned int note, unsigned long noteDuration);
 };
 
 #endif
